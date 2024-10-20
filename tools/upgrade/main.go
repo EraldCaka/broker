@@ -43,7 +43,7 @@ func main() {
 
 		for _, v := range modFile.Require {
 
-			if !strings.HasPrefix(v.Mod.Path, "github.com/EraldCaka/watermill-example") {
+			if !strings.HasPrefix(v.Mod.Path, "github.com/EraldCaka/broker") {
 
 				var commandParams []string
 				commandParams = append(commandParams, "get")
