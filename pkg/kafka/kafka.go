@@ -18,8 +18,9 @@ type Publisher struct {
 }
 
 func NewClient() (*Subscriber, *Publisher) {
+
 	kafkaConfig := kafka.SubscriberConfig{
-		Brokers:       []string{config.Get("kafka.bootstrap_servers")},
+		Brokers:       []string{config.Config.Kafka.BootstrapServers},
 		Unmarshaler:   kafka.DefaultMarshaler{},
 		ConsumerGroup: "example-group",
 	}
@@ -28,9 +29,9 @@ func NewClient() (*Subscriber, *Publisher) {
 	if err != nil {
 		log.Fatalf("Failed to create Kafka subscriber: %v", err)
 	}
-
+	log.Println("Kafka subscriber created successfully")
 	kafkaPubConfig := kafka.PublisherConfig{
-		Brokers:   []string{config.Get("kafka.bootstrap_servers")},
+		Brokers:   []string{config.Config.Kafka.BootstrapServers},
 		Marshaler: kafka.DefaultMarshaler{},
 	}
 
@@ -38,12 +39,12 @@ func NewClient() (*Subscriber, *Publisher) {
 	if err != nil {
 		log.Fatalf("Failed to create Kafka publisher: %v", err)
 	}
-
+	log.Println("Kafka publisher created successfully")
 	return &Subscriber{subscriber: kafkaSub}, &Publisher{publisher: kafkaPub}
 }
 
 func (s *Subscriber) ConsumeMessages(routeFunc func(*message.Message) error) {
-	messages, err := s.subscriber.Subscribe(context.Background(), config.Get("kafka.topic"))
+	messages, err := s.subscriber.Subscribe(context.Background(), config.Config.Kafka.Services["user-service"].Topic)
 	if err != nil {
 		log.Fatalf("Failed to subscribe to topic: %v", err)
 	}
@@ -53,6 +54,7 @@ func (s *Subscriber) ConsumeMessages(routeFunc func(*message.Message) error) {
 		if err != nil {
 			log.Printf("Failed to route message: %v", err)
 		}
+		log.Println("message delivered successfully")
 		msg.Ack()
 	}
 }

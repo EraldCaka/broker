@@ -30,13 +30,16 @@ func NewBroker() *Broker {
 
 func (b *Broker) Start() error {
 	log.Println("Starting broker...")
+	b.setServices()
 
+	select {}
+}
+
+func (b *Broker) setServices() {
 	go b.kafkaSubscriber.ConsumeMessages(b.routeMessage)
 	go b.serviceRegistry.RegisterService("auth-service", "localhost:5000")
 	go b.serviceRegistry.RegisterService("user-service", "localhost:5001")
 	go b.serviceRegistry.RegisterService("product-service", "localhost:5002")
-
-	select {}
 }
 
 func (b *Broker) routeMessage(msg *message.Message) error {

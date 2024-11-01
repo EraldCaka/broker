@@ -1,0 +1,14 @@
+kafka:
+  bootstrap_servers: "localhost:9092"
+  services:
+    auth-service:
+      topic: "auth-service-topic"
+      role: "publisher"
+    user-service:
+      topic: "user-service-topic"
+      role: "subscriber"
+      subscribes_to:
+        - "auth-service-topic"
+    product-service:
+      topic: "product-service-topic"
+      role: "both"

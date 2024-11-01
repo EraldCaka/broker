@@ -3,3 +3,9 @@ upgrade:
 
 tidy:
 	@go mod tidy
+
+up:
+	@cd build && docker compose up
+
+run:
+	@cd cmd/broker && go run .
