@@ -2,13 +2,19 @@ kafka:
   bootstrap_servers: "localhost:9092"
   services:
     auth-service:
+      name: "auth"
+      url: "localhost:5000"
       topic: "auth-service-topic"
-      role: "publisher"   # This service publishes messages
+      role: "publisher"
     user-service:
+      name: "user"
+      url: "localhost:5001"
       topic: "user-service-topic"
-      role: "subscriber"  # This service subscribes to the auth-service-topic
+      role: "subscriber"
       subscribes_to:
         - "auth-service-topic"
     product-service:
+      name: "product"
+      url: "localhost:5002"
       topic: "product-service-topic"
-      role: "both"        # Both publishes and subscribes as needed
+      role: "both"

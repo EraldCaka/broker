@@ -9,6 +9,8 @@ import (
 type ServiceConfig struct {
 	Topic        string   `yaml:"topic"`
 	Role         string   `yaml:"role"`
+	Url          string   `yaml:"url"`
+	Name         string   `yaml:"name"`
 	SubscribesTo []string `yaml:"subscribes_to"`
 }
 
@@ -21,7 +23,6 @@ type AppConfig struct {
 	Kafka KafkaConfig `yaml:"kafka"`
 }
 
-// Config Global variable to hold the configuration
 var Config AppConfig
 
 func InitConfig() {

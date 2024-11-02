@@ -1,6 +1,7 @@
 package loadbalancer
 
 import (
+	"github.com/EraldCaka/broker/pkg/config"
 	"math/rand"
 	"sync"
 )
@@ -11,7 +12,11 @@ type LoadBalancer struct {
 }
 
 func NewLoadBalancer() *LoadBalancer {
-	return &LoadBalancer{}
+	var services []string
+	for _, service := range config.Config.Kafka.Services {
+		services = append(services, service.Url)
+	}
+	return &LoadBalancer{services: services}
 }
 
 func (lb *LoadBalancer) RegisterService(service string) {

@@ -1,6 +1,7 @@
 package broker
 
 import (
+	"github.com/EraldCaka/broker/pkg/config"
 	"github.com/EraldCaka/broker/pkg/discovery"
 	"github.com/EraldCaka/broker/pkg/kafka"
 	"github.com/EraldCaka/broker/pkg/loadbalancer"
@@ -36,15 +37,17 @@ func (b *Broker) Start() error {
 }
 
 func (b *Broker) setServices() {
+
 	go b.kafkaSubscriber.ConsumeMessages(b.routeMessage)
-	go b.serviceRegistry.RegisterService("auth-service", "localhost:5000")
-	go b.serviceRegistry.RegisterService("user-service", "localhost:5001")
-	go b.serviceRegistry.RegisterService("product-service", "localhost:5002")
+	for _, service := range config.Config.Kafka.Services {
+		go b.serviceRegistry.RegisterService(service.Name, service.Url)
+	}
 }
 
 func (b *Broker) routeMessage(msg *message.Message) error {
 	service := b.loadBalancer.SelectService()
 	log.Printf("Routing message %s to service %s", string(msg.Payload), service)
 
+	// TODO: implement the service proxy
 	return nil
 }
