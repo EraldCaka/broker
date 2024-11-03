@@ -52,7 +52,6 @@ func (s *Subscriber) ConsumeMessages(routeFunc func(*message.Message) error) {
 		}
 
 		for msg := range messages {
-			log.Println("Message delivered successfully:", msg.Payload)
 			err = routeFunc(msg)
 			if err != nil {
 				log.Printf("Failed to route message: %v", err)

@@ -5,7 +5,6 @@ import (
 	"github.com/EraldCaka/broker/pkg/config"
 	kafkabroker "github.com/EraldCaka/broker/pkg/kafka"
 	"github.com/EraldCaka/broker/services/users/types"
-	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/gofiber/fiber/v2"
 	"log"
 	"net/http"
@@ -14,13 +13,12 @@ import (
 func main() {
 
 	config.InitConfig()
-	subscriber, publisher := kafkabroker.NewClient()
+	_, publisher := kafkabroker.NewClient()
 
 	app := fiber.New()
 
 	app.Get("/get", func(ctx *fiber.Ctx) error {
 		log.Println("GET request triggered!")
-		log.Println("IP:", ctx.IP())
 
 		user := &users.UserBody{
 			Name:     "user1",
@@ -43,22 +41,6 @@ func main() {
 		log.Println("User data sent to Kafka:", user)
 		return ctx.JSON(user)
 	})
-
-	go func() {
-		var targetStruct users.UserBody
-		subscriber.ConsumeMessages(func(msg *message.Message) error {
-
-			err := json.Unmarshal(msg.Payload, &targetStruct)
-			if err != nil {
-				log.Printf("Failed to unmarshal Kafka message: %v", err)
-				return err
-			}
-
-			log.Printf("Kafka message received: %+v", targetStruct)
-
-			return nil
-		})
-	}()
 
 	log.Fatal(app.Listen(":5001"))
 }

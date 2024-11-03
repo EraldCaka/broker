@@ -46,7 +46,7 @@ func (b *Broker) setServices() {
 
 func (b *Broker) routeMessage(msg *message.Message) error {
 	service := b.loadBalancer.SelectService()
-	log.Printf("Routing message %s to service %s", string(msg.Payload), service)
+	log.Printf("Routing message with id %s to service %s", msg.UUID, service)
 
 	// TODO: implement the service proxy
 	return nil
