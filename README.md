@@ -53,5 +53,15 @@ func (s *Subscriber) ConsumeMessages(routeFunc func(*message.Message) error) {
 ```
 
    - Parameters:
-      - ''routeFunc'': A function to process each message. This is where custom logic is applied.
+      - ``routeFunc``: A function to process each message. This is where custom logic is applied.
    - Usage: Services consume messages using this method and process them accordingly:
+
+```go
+func routeFunc(msg *message.Message) error {
+	// error handling
+	return nil
+}
+
+log.Printf("Received message with ID: %s", msg.UUID)
+
+```
