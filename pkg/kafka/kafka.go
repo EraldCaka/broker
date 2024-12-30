@@ -2,11 +2,12 @@ package kafka
 
 import (
 	"context"
+	"log"
+
 	"github.com/EraldCaka/broker/pkg/config"
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill-kafka/v2/pkg/kafka"
 	"github.com/ThreeDotsLabs/watermill/message"
-	"log"
 )
 
 type Subscriber struct {
@@ -44,18 +45,20 @@ func NewClient() (*Subscriber, *Publisher) {
 }
 
 func (s *Subscriber) ConsumeMessages(routeFunc func(*message.Message) error) {
-
+	for name, service := range config.Config.Kafka.Services {
+		log.Println("list:>>>>", name, service)
+	}
 	for _, service := range config.Config.Kafka.Services {
 		messages, err := s.subscriber.Subscribe(context.Background(), service.Topic)
 		if err != nil {
 			log.Fatalf("Failed to subscribe to topic: %v", err)
 		}
-
 		for msg := range messages {
 			err = routeFunc(msg)
 			if err != nil {
 				log.Printf("Failed to route message: %v", err)
 			}
+			log.Println("Service: ", service.Name, ", sent: ", string(msg.Payload))
 			msg.Ack()
 		}
 	}

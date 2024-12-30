@@ -1,9 +1,10 @@
 package config
 
 import (
-	"gopkg.in/yaml.v3"
 	"log"
 	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
 type ServiceConfig struct {
@@ -26,7 +27,7 @@ type AppConfig struct {
 var Config AppConfig
 
 func InitConfig() {
-	data, err := os.ReadFile("config.yaml")
+	data, err := os.ReadFile("/Users/eraldcaka/Documents/github/broker/config.yaml")
 	if err != nil {
 		log.Fatalf("Failed to read config file: %v", err)
 	}

@@ -1,0 +1,10 @@
+kafka:
+  bootstrap_servers: "localhost:9092"
+  services:
+    user-service:
+      name: "user"
+      url: "localhost:5001"
+      topic: "user-service-topic"
+      role: "subscriber"
+      subscribes_to:
+        - "auth-service-topic"
