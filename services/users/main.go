@@ -13,9 +13,7 @@ import (
 )
 
 func routeFunc(msg *message.Message) error {
-	log.Printf("Received message with ID: %s", msg.UUID)
-	log.Println("Payload:", string(msg.Payload))
-
+	// error handling
 	return nil
 }
 

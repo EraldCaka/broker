@@ -12,7 +12,7 @@ import (
 )
 
 /*
-dummy services for testing purposes only
+dummy service for testing purposes only
 */
 func main() {
 

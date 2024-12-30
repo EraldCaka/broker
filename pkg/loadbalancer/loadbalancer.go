@@ -1,9 +1,10 @@
 package loadbalancer
 
 import (
-	"github.com/EraldCaka/broker/pkg/config"
 	"math/rand"
 	"sync"
+
+	"github.com/EraldCaka/broker/pkg/config"
 )
 
 type LoadBalancer struct {
@@ -43,6 +44,5 @@ func (lb *LoadBalancer) SelectService() string {
 	if len(lb.services) == 0 {
 		return ""
 	}
-	// in here I use RoundRobin logic
 	return lb.services[rand.Intn(len(lb.services))]
 }

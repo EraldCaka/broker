@@ -47,6 +47,7 @@ func NewClient() (*Subscriber, *Publisher) {
 func (s *Subscriber) ConsumeMessages(routeFunc func(*message.Message) error) {
 	for _, service := range config.Config.Kafka.Services {
 		log.Printf("Starting subscription for service %s on topic %s", service.Name, service.Topic)
+		// TODO: Add logic to also subscribe on messages from the other subscribed service topics
 		messages, err := s.subscriber.Subscribe(context.Background(), service.Topic)
 		if err != nil {
 			log.Fatalf("Failed to subscribe to topic %s: %v", service.Topic, err)
