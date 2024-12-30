@@ -1,6 +1,11 @@
 kafka:
   bootstrap_servers: "localhost:9092"
   services:
+    auth-service:
+      name: "auth"
+      url: "localhost:5005"
+      topic: "auth-service-topic"
+      role: "publisher"
     user-service:
       name: "user"
       url: "localhost:5001"

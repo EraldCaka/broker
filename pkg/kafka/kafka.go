@@ -45,22 +45,22 @@ func NewClient() (*Subscriber, *Publisher) {
 }
 
 func (s *Subscriber) ConsumeMessages(routeFunc func(*message.Message) error) {
-	for name, service := range config.Config.Kafka.Services {
-		log.Println("list:>>>>", name, service)
-	}
 	for _, service := range config.Config.Kafka.Services {
+		log.Printf("Starting subscription for service %s on topic %s", service.Name, service.Topic)
 		messages, err := s.subscriber.Subscribe(context.Background(), service.Topic)
 		if err != nil {
-			log.Fatalf("Failed to subscribe to topic: %v", err)
+			log.Fatalf("Failed to subscribe to topic %s: %v", service.Topic, err)
 		}
-		for msg := range messages {
-			err = routeFunc(msg)
-			if err != nil {
-				log.Printf("Failed to route message: %v", err)
+		go func(service config.ServiceConfig) {
+			for msg := range messages {
+				log.Printf("Received message on topic %s for service %s: %s", service.Topic, service.Name, string(msg.Payload))
+				err := routeFunc(msg)
+				if err != nil {
+					log.Printf("Failed to route message: %v", err)
+				}
+				msg.Ack()
 			}
-			log.Println("Service: ", service.Name, ", sent: ", string(msg.Payload))
-			msg.Ack()
-		}
+		}(service)
 	}
 }
 

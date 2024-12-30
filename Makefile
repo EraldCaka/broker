@@ -4,8 +4,8 @@ upgrade:
 tidy:
 	@go mod tidy
 
-up:
+up:	# start kafka and zookeeper docker images
 	@cd build && docker compose up
 
-run:
+run: # start broker
 	@cd cmd/broker && go run .
