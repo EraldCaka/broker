@@ -46,22 +46,24 @@ func NewClient() (*Subscriber, *Publisher) {
 
 func (s *Subscriber) ConsumeMessages(routeFunc func(*message.Message) error) {
 	for _, service := range config.Config.Kafka.Services {
-		log.Printf("Starting subscription for service %s on topic %s", service.Name, service.Topic)
-		// TODO: Add logic to also subscribe on messages from the other subscribed service topics
-		messages, err := s.subscriber.Subscribe(context.Background(), service.Topic)
-		if err != nil {
-			log.Fatalf("Failed to subscribe to topic %s: %v", service.Topic, err)
-		}
-		go func(service config.ServiceConfig) {
-			for msg := range messages {
-				log.Printf("Received message on topic %s for service %s: %s", service.Topic, service.Name, string(msg.Payload))
-				err := routeFunc(msg)
-				if err != nil {
-					log.Printf("Failed to route message: %v", err)
-				}
-				msg.Ack()
+		subscriptionTopics := append(service.SubscribesTo, service.Topic)
+		for _, topic := range subscriptionTopics {
+			log.Printf("Starting subscription for service %s on topic %s", service.Name, topic)
+			messages, err := s.subscriber.Subscribe(context.Background(), topic)
+			if err != nil {
+				log.Fatalf("Failed to subscribe to topic %s: %v", topic, err)
 			}
-		}(service)
+			go func(service config.ServiceConfig, topic string) {
+				for msg := range messages {
+					log.Printf("Received message on topic %s for service %s: %s", topic, service.Name, string(msg.Payload))
+					err := routeFunc(msg)
+					if err != nil {
+						log.Printf("Failed to route message: %v", err)
+					}
+					msg.Ack()
+				}
+			}(service, topic)
+		}
 	}
 }
 
